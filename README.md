@@ -10,8 +10,7 @@ that the voltage signal travels down the axon of a neuron until it reaches anoth
 
 Todo
 =====
-* Fix the model. It plots but the plot looks kinda weird so one of the equations must be wrong
-
+* ~~Fix the model. It plots but the plot looks kinda weird so one of the equations must be wrong~~
 
 ![](model.jpg)
 ![](mhn.jpg)
