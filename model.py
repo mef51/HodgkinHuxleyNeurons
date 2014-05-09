@@ -3,6 +3,7 @@
 from __future__ import division
 import numpy as np
 import pylab
+import time
 
 # sauce: http://www.neurdon.com/2011/01/26/neural-modeling-with-python-part-2/
 
@@ -34,7 +35,7 @@ pylab.savefig("mhn.jpg")
 # Setup parameters and state variables
 T    = 55    # ms
 dt   = 0.025 # ms
-time = np.arange(0, T+dt, dt)
+timeLine = np.arange(0, T+dt, dt)
 
 # Hodgkin-Huxley Parametahs (from the papah!)
 restingVoltage     = 0      # V_rest (mv)
@@ -46,7 +47,7 @@ sodiumPotential    = 115    # mV
 potassiumPotential = -12    # mv
 leakagePotential   = 10.613 # mV
 
-Vm    = np.zeros(len(time)) # The membrane potential we wanna find
+Vm    = np.zeros(len(timeLine)) # The membrane potential we wanna find
 Vm[0] = restingVoltage
 m     = mInf(restingVoltage)
 h     = hInf(restingVoltage)
@@ -54,13 +55,14 @@ n     = nInf(restingVoltage)
 
 # Current Stimulus
 # This is like a pulse
-I = np.zeros(len(time))
-for i, t in enumerate(time):
+I = np.zeros(len(timeLine))
+for i, t in enumerate(timeLine):
     if 5 <= t <= 30:
         I[i] = 10 # uA/cm2
 
 # Main loop
-for i in range(1, len(time)):
+pylab.figure()
+for i in range(1, len(timeLine)):
     sodiumConductance    = gBarNa * (m**3) * h
     potassiumConductance = gBarK  * (n**4)
     leakageConductance   = gBarL
@@ -76,10 +78,26 @@ for i in range(1, len(time)):
     leakageCurrent = leakageConductance * (Vm[i-1] - leakagePotential)
     Vm[i] = Vm[i-1] + (I[i-1] - sodiumCurrent - potassiumCurrent - leakageCurrent) * dt / Cm
 
+    # update status
+    if i % 25 == 0:
+        # update status every 25 frames (about a second of video).
+        # don't wanna print a lot cuz it slows things down
+        print "Time: " + str(i*dt) + ", Saving frame " + str(i)
+
+    # plot a frame of the graph
+    pylab.plot(timeLine[:i+1], Vm[:i+1], timeLine[:i+1], I[:i+1])
+    pylab.ylim([-20,120])
+    pylab.xlim([0,60])
+    pylab.title('Hodgkin-Huxley: t = ' + format(i*dt, '.3f') + ' ms')
+    pylab.ylabel('Membrane Potential (mV)')
+    pylab.xlabel('Time (ms)')
+    pylab.savefig("frames/model" + str(i) + ".jpg")
+    pylab.clf()
+
 pylab.figure()
-pylab.plot(time, Vm, time, -30+I)
+pylab.plot(timeLine, Vm, timeLine, I)
 pylab.title('Hodgkin-Huxley Example')
 pylab.ylabel('Membrane Potential (mV)')
-pylab.xlabel('Time (msec)')
-pylab.show()
+pylab.xlabel('timeLine (msec)')
 pylab.savefig("model.jpg")
+
