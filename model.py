@@ -4,6 +4,7 @@ from __future__ import division
 import numpy as np
 import pylab
 import time
+from matplotlib.animation import ArtistAnimation
 
 # sauce: http://www.neurdon.com/2011/01/26/neural-modeling-with-python-part-2/
 
@@ -61,7 +62,8 @@ for i, t in enumerate(timeLine):
         I[i] = 10 # uA/cm2
 
 # Main loop
-pylab.figure()
+animationFigure = pylab.figure()
+images = []
 for i in range(1, len(timeLine)):
     sodiumConductance    = gBarNa * (m**3) * h
     potassiumConductance = gBarK  * (n**4)
@@ -84,15 +86,17 @@ for i in range(1, len(timeLine)):
         # don't wanna print a lot cuz it slows things down
         print "Time: " + str(i*dt) + ", Saving frame " + str(i)
 
-    # plot a frame of the graph
-    pylab.plot(timeLine[:i+1], Vm[:i+1], timeLine[:i+1], I[:i+1])
-    pylab.ylim([-20,120])
-    pylab.xlim([0,60])
-    pylab.title('Hodgkin-Huxley: t = ' + format(i*dt, '.3f') + ' ms')
-    pylab.ylabel('Membrane Potential (mV)')
-    pylab.xlabel('Time (ms)')
-    pylab.savefig("frames/model" + str(i) + ".jpg")
-    pylab.clf()
+        # plot a frame of the graph
+        voltageLine, currentLine = pylab.plot(timeLine[:i+1], Vm[:i+1], 'b-', timeLine[:i+1], I[:i+1], 'g-')
+        pylab.legend([voltageLine, currentLine], ["Response from cell", "Impulse current"])
+        pylab.title('Hodgkin-Huxley Model of Action Potentials')
+        pylab.ylabel('Membrane Potential (mV)')
+        pylab.xlabel('Time (ms)')
+        images.append((voltageLine, currentLine))
+
+anim = ArtistAnimation(animationFigure, images, interval = 50, blit = True)
+print "Saving animation"
+anim.save("model.mp4", dpi=200, extra_args=['-vcodec', 'libx264'])
 
 pylab.figure()
 pylab.plot(timeLine, Vm, timeLine, I)

@@ -8,11 +8,12 @@ across the membrane by passing charged ions (ex. sodium, potassium) through the 
 travels down a neuron it's by a concerted effort of the ion channels in the membrane, opening and closing in such a way
 that the voltage signal travels down the axon of a neuron until it reaches another neuron.
 
+![](model.gif)
+
 Todo
 =====
 * ~~Fix the model. It plots but the plot looks kinda weird so one of the equations must be wrong~~
-* Animate graphs
+* ~~Animate graph~~
+* CHANGE THE WORLD
 
-
-![](model.jpg)
 ![](mhn.jpg)
